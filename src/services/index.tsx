@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { endpoint } from '../constants';
-import { IGetCharacterResponse, IGetEpisodeResponse, IEpisode } from '../types';
+import { IGetCharacterResponse, IGetEpisodeResponse, IEpisode, ICharacterFilters } from '../types';
 
 // Retrieve characters matching "name" otherwise return all characters
 export const getCharacter = async(name: string): Promise<IGetCharacterResponse> => {
@@ -14,9 +14,9 @@ export const getCharacter = async(name: string): Promise<IGetCharacterResponse> 
 }
 
 // Retrieve characters with additional filters
-export const getCharacterWithFilter = async(page: number, name: string | undefined): Promise<IGetCharacterResponse> => {
+export const getCharacterWithFilter = async(filter: ICharacterFilters): Promise<IGetCharacterResponse> => {
     try {
-        let getCharacterWithFilterResponse = await axios.get<IGetCharacterResponse>(`${endpoint.url}/character/?page=${page}&name=${name}`);
+        let getCharacterWithFilterResponse = await axios.get<IGetCharacterResponse>(`${endpoint.url}/character/?page=${filter.page}&name=${filter.name}&status=${filter.status}&species=${filter.species}&gender=${filter.gender}`);
         return getCharacterWithFilterResponse.data;
     } catch(err) {
         console.log('getCharacterWithFilter error: ', err);

@@ -26,6 +26,7 @@ const SearchComponent: React.FC = () => {
     // Queries the getCharacter service to retrieve first list of results from API to pass onto /search-results component to render
     const handleSearch = async (name: string) => {
         setIsLoading(true);
+
         await getCharacter(name)
             .then((response) => {
                 setIsLoading(false);
@@ -49,7 +50,7 @@ const SearchComponent: React.FC = () => {
 
     return (
         <>
-            <TextField style={{ background: '#fff' }} label="Search" variant="filled" onKeyUp={(e) => {
+            <TextField style={{ background: '#fff' }} label="Search" placeholder="Search Name" variant="filled" onKeyUp={(e) => {
                 if (e.keyCode === 13) handleSearch((e.target as HTMLInputElement).value);
             }} />
             {isLoading && (

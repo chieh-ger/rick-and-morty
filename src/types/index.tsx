@@ -2,6 +2,14 @@ export type TEndpoint = {
     url: string;
 }
 
+export interface ICharacterFilters {
+    page?: number;
+    name: string;
+    gender?: string;
+    species?: string;
+    status?: string;
+}
+
 export interface ICharacterInfo {
     characterInfo: ICharacterList;
     episodeList: IEpisode[] | [];

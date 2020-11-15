@@ -9,7 +9,12 @@ import {
     CardContent,
     CircularProgress,
     Snackbar,
-    Button
+    Button,
+    FormControl,
+    InputLabel,
+    Select,
+    MenuItem,
+    Divider
 } from '@material-ui/core';
 import { ICharacterList, IGetCharacterResponse, IEpisode } from '../../types';
 import { getCharacterWithFilter, getAllEpisodes, getCharacter } from '../../services';
@@ -29,7 +34,12 @@ const ResultsComponent: React.FC<RouteComponentProps<{}, any, IGetCharacterRespo
     const [searchResult, setSearchResult] = useState<any>();
     const [hasError, setHasError] = useState(false);
     const [errorMessage, setErrorMessage] = useState('');
-
+    const genderFilter = ['Male', 'Female', 'Genderless', 'Unknown'];
+    const statusFilter = ['Dead', 'Alive', 'Unknown'];
+    const speciesFilter = ['Human', 'Alien'];
+    const [gender, setGender] = useState('');
+    const [status, setStatus] = useState('');
+    const [species, setSpecies] = useState('');
     const [viewIndex, setViewIndex] = useState(0);
     const [pageQueried, setPageQueried] = useState(1);
     useEffect(() => {
@@ -47,7 +57,7 @@ const ResultsComponent: React.FC<RouteComponentProps<{}, any, IGetCharacterRespo
         setViewIndex((index * 5) % 20);
         if (pageQueried !== pageToQuery) {
             setIsLoading(true);
-            await getCharacterWithFilter(pageToQuery, characterFilterName)
+            await getCharacterWithFilter({ page: pageToQuery, name: characterFilterName, status, species, gender })
                 .then((response) => {
                     // Set the current page being queried by API
                     setPageQueried(pageToQuery);
@@ -68,6 +78,10 @@ const ResultsComponent: React.FC<RouteComponentProps<{}, any, IGetCharacterRespo
         setCharacterFilterName('');
         await getCharacter('')
             .then((response) => {
+                // Resetting filters
+                setGender('');
+                setStatus('');
+                setSpecies('');
                 setSearchResult(response.results);
                 setTotalResults(response.info.count);
                 setIsLoading(false);
@@ -83,13 +97,11 @@ const ResultsComponent: React.FC<RouteComponentProps<{}, any, IGetCharacterRespo
     // the call won't have to be run again.
     const handleModalOpen = async (characterInfo: ICharacterList) => {
         if (episodeList.length === 0) {
-            setIsLoading(true);
             await getAllEpisodes()
                 .then((response) => {
                     setEpisodeList(response);
                     setIsLoading(false);
                 }).catch(err => {
-                    setIsLoading(false);
                     setHasError(true);
                     setErrorMessage('Unable to retrieve episode list details');
                 })
@@ -110,6 +122,28 @@ const ResultsComponent: React.FC<RouteComponentProps<{}, any, IGetCharacterRespo
         setHasError(false);
     };
 
+    // Handle filter
+    useEffect(() => {
+        if(gender || status || species) {
+            (async() => {
+                await getCharacterWithFilter({ page: 1, name: characterFilterName, status, species, gender })
+                .then((response) => {
+                    setIsShowingAll(false);
+                    // Set the current page being queried by API
+                    setPageQueried(1);
+                    // Set new batch of data to use in the view
+                    setTotalResults(response.info.count);
+                    setSearchResult(response.results);
+                    setIsLoading(false);
+                }).catch(err => {
+                    setIsLoading(false);
+                    setHasError(true);
+                    setErrorMessage(err.message);
+                })
+            })();
+        }
+    }, [gender, status, species])
+
     useEffect(() => {
         if (searchResult?.length > 0) {
             setRows(searchResult?.slice(viewIndex, viewIndex + 5));
@@ -121,11 +155,59 @@ const ResultsComponent: React.FC<RouteComponentProps<{}, any, IGetCharacterRespo
             {isLoading && (
                 <CircularProgress color="primary" />
             )}
-            {!isShowingAll &&
-                <Grid item xs={12}>
-                    <Button onClick={showAllCharacters} variant="contained" color="primary">Show All Characters</Button>
-                </Grid>
-            }
+            <Grid item xs={12}>
+                <FormControl variant="filled" style={{ minWidth: 120 }}>
+                    <InputLabel id="demo-simple-select-filled-label">Gender</InputLabel>
+                    <Select
+                        labelId="demo-simple-select-filled-label"
+                        id="demo-simple-select-filled"
+                        value={gender}
+                        onChange={(e) => setGender((e.target as HTMLInputElement).value)}
+                    >
+                        <MenuItem value="">
+                            <em>None</em>
+                        </MenuItem>
+                        {genderFilter.map((gender) => (
+                            <MenuItem key={gender} value={gender}>{gender}</MenuItem>
+                        ))}
+                    </Select>
+                </FormControl>
+                <FormControl variant="filled" style={{ minWidth: 120 }}>
+                    <InputLabel id="demo-simple-select-filled-label">Status</InputLabel>
+                    <Select
+                        labelId="demo-simple-select-filled-label"
+                        id="demo-simple-select-filled"
+                        value={status}
+                        onChange={(e) => setStatus((e.target as HTMLInputElement).value)}
+                    >
+                        <MenuItem value="">
+                            <em>None</em>
+                        </MenuItem>
+                        {statusFilter.map((status) => (
+                            <MenuItem key={status} value={status}>{status}</MenuItem>
+                        ))}
+                    </Select>
+                </FormControl>
+                <FormControl variant="filled" style={{ minWidth: 120 }}>
+                    <InputLabel id="demo-simple-select-filled-label">Species</InputLabel>
+                    <Select
+                        labelId="demo-simple-select-filled-label"
+                        id="demo-simple-select-filled"
+                        value={species}
+                        onChange={(e) => setSpecies((e.target as HTMLInputElement).value)}
+                    >
+                        <MenuItem value="">
+                            <em>None</em>
+                        </MenuItem>
+                        {speciesFilter.map((specie) => (
+                            <MenuItem key={specie} value={specie}>{specie}</MenuItem>
+                        ))}
+                    </Select>
+                </FormControl>
+            </Grid>
+            <hr />
+            {!isShowingAll && <Button onClick={showAllCharacters} variant="contained" color="primary">Clear all filters</Button>}
+            <hr />
             <Grid item xs={12}>
                 <Grid container justify="center" spacing={2}>
                     {!isLoading && rows.map((item: ICharacterList) => (
@@ -150,6 +232,7 @@ const ResultsComponent: React.FC<RouteComponentProps<{}, any, IGetCharacterRespo
                     ))}
                 </Grid>
             </Grid>
+            <hr />
             <Grid item xs={12}>
                 <Grid
                     container
