@@ -1,0 +1,48 @@
+.MuiCardHeader-root > div > .MuiCardHeader-subheader {
+    width: 170px;
+    font-size: 12px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.MuiCardHeader-root > div > .MuiCardHeader-title {
+    width: 170px;
+    font-size: 14px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.card {
+    width: 200px;
+    max-height: 300px;
+    margin-right: 10px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+.card:hover {
+    cursor: pointer;
+    font-weight: 800;
+    background: #04a7e0;
+    transition: all 0.5s;
+}
+.card-media {
+    height: 100px;
+    padding-top: 50px;
+}
+.MuiPagination-ul > li > .Mui-selected,
+.MuiPagination-ul > li > .Mui-selected:hover {
+    background-color: #929eaa;
+}
+.MuiPagination-ul > li > .MuiPaginationItem-ellipsis {
+    color: #fff;
+}
+.MuiPagination-ul > li > button {
+    background-color: #fff;
+}
+.MuiPagination-ul > li > button:hover {
+    background-color: #04a7e0;
+}
+.MuiPagination-ul > li > button:disabled {
+    background-color: #888;
+    color: #fff;
+}

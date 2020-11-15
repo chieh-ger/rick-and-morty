@@ -5,9 +5,28 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background-image: url('https://images.hdqwalls.com/download/rick-and-morty-season-4-qk-1920x1080.jpg');
+  background-repeat: no-repeat;
+  background-attachment: absolute;
+  background-size: cover;
 }
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
+}
+
+.error,
+.info {
+  padding: 15px;
+  font-weight: 600;
+  font-size: 13px;
+  color: #fff;
+  border-radius: 5px;
+}
+.info {
+  background: #359ad9;
+}
+.error {
+  background: #ef4b5d;
 }
