@@ -136,9 +136,12 @@ const ResultsComponent: React.FC<RouteComponentProps<{}, any, IGetCharacterRespo
                     setSearchResult(response.results);
                     setIsLoading(false);
                 }).catch(err => {
+                    setTotalResults(0);
+                    setSearchResult([]);
+                    setPageQueried(1);
                     setIsLoading(false);
                     setHasError(true);
-                    setErrorMessage(err.message);
+                    setErrorMessage(err.message.indexOf('404') > -1 ? `Cannot find entries matching the filter` : err.message);
                 })
             })();
         }
