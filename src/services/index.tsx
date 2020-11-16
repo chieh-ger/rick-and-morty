@@ -20,7 +20,7 @@ export const getCharacterWithFilter = async(filter: ICharacterFilters): Promise<
         return getCharacterWithFilterResponse.data;
     } catch(err) {
         console.log('getCharacterWithFilter error: ', err);
-        return err;
+        throw err;
     }
 }
 
